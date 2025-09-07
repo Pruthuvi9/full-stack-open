@@ -1,10 +1,11 @@
-const Contacts = ({ filtered, persons }) => {
+const Contacts = ({ filtered, persons, deletePerson }) => {
   return (
     <ul>
       {filtered.length < 1
         ? persons.map((person) => (
             <li key={person.name}>
-              {person.name} {person.number}
+              {person.name} {person.number}{" "}
+              <button onClick={() => deletePerson(person)}>Delete</button>
             </li>
           ))
         : filtered.map((person) => (
@@ -17,4 +18,3 @@ const Contacts = ({ filtered, persons }) => {
 };
 
 export default Contacts;
-

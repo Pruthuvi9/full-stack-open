@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import pbService from "./services/pbService";
 import AddContact from "./components/AddContact";
 import SearchFilter from "./components/SearchFilter";
 import Contacts from "./components/Contacts";
@@ -11,12 +11,12 @@ const App = () => {
   const [filtered, setFiltered] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((res) => {
+    pbService.getAll().then((res) => {
       setPersons(res.data);
     });
   }, []);
 
-  const addName = (e) => {
+  const addPerson = (e) => {
     e.preventDefault();
 
     let similarNameArr = persons.filter((person) => person.name === newName);
@@ -24,17 +24,28 @@ const App = () => {
     if (similarNameArr.length > 0) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      const newPersonsArr = [...persons, { name: newName, number: newNumber }];
-      setPersons(newPersonsArr);
-      // console.log("persons:", newPersonsArr);
+      const newPersonObj = { name: newName, number: newNumber };
+      pbService
+        .addPerson(newPersonObj)
+        .then((res) => setPersons([...persons, res.data]));
+
       setNewName("");
       setNewNumber("");
     }
   };
 
+  const deletePerson = (p) => {
+    if (window.confirm(`Delete ${p.name}?`)) {
+      pbService
+        .deletePerson(p.id)
+        .then((res) => console.log("deleted", res.data));
+      setPersons(persons.filter((person) => person.id !== p.id));
+    }
+  };
+
   const handleSearch = (e) => {
     const searchValue = e.target.value;
-    // console.log(typeof searchValue);
+
     setFiltered(
       persons.filter(
         (person) =>
@@ -49,14 +60,18 @@ const App = () => {
       <SearchFilter handleSearch={handleSearch} />
       <h2>Add a contact</h2>
       <AddContact
-        addName={addName}
+        addName={addPerson}
         newName={newName}
         setNewName={setNewName}
         newNumber={newNumber}
         setNewNumber={setNewNumber}
       />
       <h2>Numbers</h2>
-      <Contacts filtered={filtered} persons={persons} />
+      <Contacts
+        filtered={filtered}
+        persons={persons}
+        deletePerson={deletePerson}
+      />
     </div>
   );
 };
