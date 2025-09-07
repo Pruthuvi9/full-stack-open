@@ -11,8 +11,8 @@ const App = () => {
   const [filtered, setFiltered] = useState([]);
 
   useEffect(() => {
-    pbService.getAll().then((res) => {
-      setPersons(res.data);
+    pbService.getAll().then((data) => {
+      setPersons(data);
     });
   }, []);
 
@@ -22,13 +22,31 @@ const App = () => {
     let similarNameArr = persons.filter((person) => person.name === newName);
 
     if (similarNameArr.length > 0) {
-      alert(`${newName} is already added to phonebook`);
+      const personToUpdate = {
+        ...similarNameArr[0],
+        name: newName,
+        number: newNumber,
+      };
+      let confirmationMessage = `${newName} is already added to phonebook, replace the old number with a new one?`;
+
+      if (window.confirm(confirmationMessage)) {
+        pbService
+          .updatePerson(personToUpdate)
+          .then((returnedPerson) =>
+            setPersons(
+              persons.map((person) =>
+                person.name === newName ? returnedPerson : person
+              )
+            )
+          );
+        setNewName("");
+        setNewNumber("");
+      }
     } else {
       const newPersonObj = { name: newName, number: newNumber };
       pbService
         .addPerson(newPersonObj)
-        .then((res) => setPersons([...persons, res.data]));
-
+        .then((returnedPerson) => setPersons([...persons, returnedPerson]));
       setNewName("");
       setNewNumber("");
     }
@@ -38,7 +56,7 @@ const App = () => {
     if (window.confirm(`Delete ${p.name}?`)) {
       pbService
         .deletePerson(p.id)
-        .then((res) => console.log("deleted", res.data));
+        .then((deletedPerson) => console.log("deleted", deletedPerson));
       setPersons(persons.filter((person) => person.id !== p.id));
     }
   };
