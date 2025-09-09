@@ -1,4 +1,7 @@
+import Weather from "./Weather";
+
 const CountryStats = ({ country }) => {
+  // console.log("country:", country);
   return (
     <div>
       <h2>{country.name.common}</h2>
@@ -20,6 +23,7 @@ const CountryStats = ({ country }) => {
           style={{ maxWidth: "500px", width: "100%" }}
         />
       </div>
+      <Weather country={country} />
     </div>
   );
 };

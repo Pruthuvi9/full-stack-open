@@ -10,17 +10,23 @@ function App() {
   useEffect(() => {
     axios
       .get("https://studies.cs.helsinki.fi/restcountries/api/all")
-      .then((res) => setAllCountries(res.data));
+      .then((res) => setAllCountries(res.data))
+      .catch((error) => console.log("error:", error));
   }, []);
 
   const searchForCountry = (e) => {
     const value = e.target.value;
-    let results = allCountries.filter(
-      (country) =>
-        country.name.common.toLowerCase().indexOf(value.toLowerCase()) !== -1
-    );
-    setSearchResults(results);
-    // console.log("search results:", results);
+
+    if (value) {
+      let results = allCountries.filter(
+        (country) =>
+          country.name.common.toLowerCase().indexOf(value.toLowerCase()) !== -1
+      );
+      setSearchResults(results);
+      // console.log("search results:", results);
+    } else {
+      setSearchResults([]);
+    }
   };
 
   return (
