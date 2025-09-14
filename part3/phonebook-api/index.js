@@ -85,7 +85,7 @@ app.post("/api/persons", (req, res) => {
   }
 });
 
-app.get("/api/info", (req, res) => {
+app.get("/info", (req, res) => {
   const numOfPeople = persons.length;
   const time = new Date(Date.now());
 
