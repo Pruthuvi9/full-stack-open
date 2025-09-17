@@ -1,7 +1,12 @@
 const express = require("express");
 const app = express();
+const morgan = require("morgan");
 
 app.use(express.json());
+app.use(morgan("tiny"));
+morgan.token("body", function (req, res) {
+  return JSON.stringify(req.body);
+});
 
 let persons = [
   {
@@ -31,6 +36,16 @@ let generateId = () => {
   return String(id);
 };
 
+app.get("/info", (req, res) => {
+  const numOfPeople = persons.length;
+  const time = new Date(Date.now());
+
+  const resContent = `<p>Phonebook has info for ${numOfPeople} people</p>
+  <p>${time}</p>`;
+
+  res.send(resContent);
+});
+
 app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
@@ -54,6 +69,12 @@ app.delete("/api/persons/:id", (req, res) => {
 
   res.status(204).end();
 });
+
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms - :body"
+  )
+);
 
 app.post("/api/persons", (req, res) => {
   const body = req.body;
@@ -83,16 +104,6 @@ app.post("/api/persons", (req, res) => {
 
     res.json(person);
   }
-});
-
-app.get("/info", (req, res) => {
-  const numOfPeople = persons.length;
-  const time = new Date(Date.now());
-
-  const resContent = `<p>Phonebook has info for ${numOfPeople} people</p>
-  <p>${time}</p>`;
-
-  res.send(resContent);
 });
 
 const PORT = 3001;
