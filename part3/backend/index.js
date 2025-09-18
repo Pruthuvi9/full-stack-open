@@ -1,8 +1,6 @@
 const express = require("express");
 const app = express();
-
-app.use(express.json());
-app.use(requestLogger);
+const cors = require("cors");
 
 let notes = [
   {
@@ -45,6 +43,11 @@ const generateId = () => {
 //   response.writeHead(200, { "Content-Type": "application/json" });
 //   response.end(JSON.stringify(notes));
 // });
+
+app.use(cors());
+app.use(express.json());
+app.use(requestLogger);
+app.use(express.static("dist"));
 
 app.get("/", (request, response) => {
   response.send("<h1>Hello world</h1>");
@@ -95,6 +98,7 @@ app.post("/api/notes", (request, response) => {
 
 app.use(unknownEndpoint);
 
-const PORT = 3001;
-app.listen(PORT);
-console.log(`Server running on port ${PORT}`);
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
