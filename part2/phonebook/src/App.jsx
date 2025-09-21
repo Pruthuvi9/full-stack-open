@@ -65,6 +65,9 @@ const App = () => {
       setNewName("");
       setNewNumber("");
     }
+
+    // console.log("filtered", filtered.length);
+    // console.log("persons", persons.length);
   };
 
   const deletePerson = (p) => {
@@ -87,12 +90,19 @@ const App = () => {
   const handleSearch = (e) => {
     const searchValue = e.target.value;
 
-    setFiltered(
-      persons.filter(
-        (person) =>
-          person.name.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
-      )
-    );
+    if (searchValue) {
+      setFiltered(
+        persons.filter(
+          (person) =>
+            person.name.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
+        )
+      );
+    } else {
+      setFiltered([]);
+    }
+
+    // console.log("filtered", filtered.length);
+    // console.log("persons", persons.length);
   };
 
   return (
