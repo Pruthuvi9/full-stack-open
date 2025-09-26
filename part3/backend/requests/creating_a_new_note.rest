@@ -2,6 +2,6 @@ POST http://localhost:3001/api/notes
 Content-Type: application/json
 
 {
-    "content": "Postman is good in backend testing",
+    "content": "VS Code REST Client is good in backend testing",
     "important": true
 }

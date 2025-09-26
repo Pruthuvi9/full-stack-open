@@ -1,5 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
+const Person = require("./models/person");
 
 app.use(express.json());
 app.use(express.static("dist"));
@@ -33,7 +35,9 @@ let generateId = () => {
 };
 
 app.get("/api/persons", (req, res) => {
-  res.json(persons);
+  Person.find({}).then((person) => {
+    res.json(person);
+  });
 });
 
 app.get("/api/persons/:id", (req, res) => {
@@ -69,21 +73,14 @@ app.post("/api/persons", (req, res) => {
     });
   }
 
-  if (persons.filter((person) => person.name === body.name).length > 0) {
-    return res.status(409).json({
-      error: "person already exists",
-    });
-  } else {
-    const person = {
-      name: body.name,
-      number: body.number,
-      id: generateId(),
-    };
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
 
-    persons = persons.concat(person);
-
-    res.json(person);
-  }
+  person.save().then((savedPerson) => {
+    res.json(savedPerson);
+  });
 });
 
 app.get("/info", (req, res) => {

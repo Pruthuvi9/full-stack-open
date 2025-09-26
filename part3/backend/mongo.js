@@ -1,5 +1,4 @@
-// const mongoose = require("mongoose"); // require is not defined in ES module scope. This file is being treated as an ES module because it has a '.js' file extension and package.json contains "type": "module".
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 if (process.argv.length < 3) {
   console.log("give password as argument");
