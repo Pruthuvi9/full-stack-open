@@ -33,37 +33,41 @@ const App = () => {
       let confirmationMessage = `${newName} is already added to phonebook, replace the old number with a new one?`;
 
       if (window.confirm(confirmationMessage)) {
-        pbService
-          .updatePerson(personToUpdate)
-          .then((returnedPerson) =>
-            setPersons(
-              persons.map((person) =>
-                person.name === newName ? returnedPerson : person
-              )
+        pbService.updatePerson(personToUpdate).then((returnedPerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.name === newName ? returnedPerson : person
             )
           );
-        setNotificationType("successful");
-        setNotification(`Updated ${newName}.`);
-        setTimeout(() => {
-          setNotification(null);
-          setNotificationType(null);
-        }, 5000);
-        setNewName("");
-        setNewNumber("");
+          setNotificationType("successful");
+          setNotification(`Updated ${newName}.`);
+          setTimeout(() => {
+            setNotification(null);
+            setNotificationType(null);
+          }, 5000);
+          setNewName("");
+          setNewNumber("");
+        });
       }
     } else {
       const newPersonObj = { name: newName, number: newNumber };
       pbService
         .addPerson(newPersonObj)
-        .then((returnedPerson) => setPersons([...persons, returnedPerson]));
-      setNotificationType("successful");
-      setNotification(`Added ${newName}.`);
-      setTimeout(() => {
-        setNotification(null);
-        setNotificationType(null);
-      }, 5000);
-      setNewName("");
-      setNewNumber("");
+        .then((returnedPerson) => {
+          setPersons([...persons, returnedPerson]);
+          setNotificationType("successful");
+          setNotification(`Added ${returnedPerson.name}.`);
+          setTimeout(() => {
+            setNotification(null);
+            setNotificationType(null);
+          }, 5000);
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          setNotificationType("error");
+          setNotification(`${error.response.data.error}`);
+        });
     }
 
     // console.log("filtered", filtered.length);
