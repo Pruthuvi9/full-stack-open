@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 
@@ -12,7 +13,7 @@ const blogSchema = mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema)
 
-const mongoUrl = 'mongodb+srv://pruthuvi:dOeReQc3UTNQ6ntk@cluster0.e2yqvqx.mongodb.net/blogList?retryWrites=true&w=majority&appName=Cluster0'
+const mongoUrl = process.env.MONGODB_URI
 mongoose.connect(mongoUrl)
 
 app.use(express.json())
