@@ -23,6 +23,10 @@ blogsRouter.get('/', async (request, response) => {
 // })
 
 blogsRouter.post('/', async (request, response) => {
+  if (!request.body.title || !request.body.url) {
+    return response.status(400).end()
+  }
+
   const blog = new Blog(request.body)
 
   const result = await blog.save()
@@ -52,10 +56,10 @@ blogsRouter.put('/:id', async (request, response) => {
     return response.status(404).end()
   }
 
-  blog.title = title
-  blog.author = author
-  blog.url = url
-  blog.likes = likes
+  if (title != undefined) blog.title = title
+  if (author != undefined) blog.author = author
+  if (url != undefined) blog.url = url
+  if (likes != undefined) blog.likes = likes
 
   const updatedBlog = await blog.save()
   response.json(updatedBlog)

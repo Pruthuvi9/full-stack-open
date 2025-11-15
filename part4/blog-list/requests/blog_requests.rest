@@ -11,10 +11,8 @@ POST http://localhost:3003/api/blogs/
 Content-Type: application/json
 
 {
-    "title": "test update title",
-    "author": "test update author",
-    "url": "test update url",
-    "likes": 500
+    "url": "test url 5",
+    "author": "test update author"
 }
 
 ####
@@ -22,8 +20,5 @@ PUT http://localhost:3003/api/blogs/68ea0f2e6e84085fcb7be897
 Content-Type: application/json
 
 {
-    "title": "title 1",
-    "author": "author 1",
-    "url": "url 1",
-    "likes": 100
+    "likes": 140
 }
