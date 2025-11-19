@@ -1,7 +1,8 @@
 POST http://localhost:3001/api/notes
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InBydXRodXZpOSIsImlkIjoiNjkxOThiZGFhODI5NWI2ZDUxYWMzMWJkIiwiaWF0IjoxNzYzMjkzODAwfQ.dCAbE3QKkjl1pX23KiMaWu9A75XBc3GbKPk4x-5ts4Q
 
 {
-    "content": "VS Code REST Client is good in backend testing",
+    "content": "SPAs use token-based auth",
     "important": true
 }
