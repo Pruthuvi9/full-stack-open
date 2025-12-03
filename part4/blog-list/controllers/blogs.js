@@ -159,6 +159,7 @@ blogsRouter.put('/:id', async (request, response) => {
   if (author != undefined) blog.author = author
   if (url != undefined) blog.url = url
   if (likes != undefined) blog.likes = likes
+  // if (user != undefined) blog.user = user
 
   const updatedBlog = await blog.save()
   response.json(updatedBlog)

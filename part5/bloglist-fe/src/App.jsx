@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import Blog from './components/Blog/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -10,12 +12,14 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
-  const [author, setAuthor] = useState('')
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    blogService.getAll().then((blogs) => {
+      let sortedBlogs = blogs.sort(
+        (blog1, blog2) => blog2.likes - blog1.likes
+      )
+      setBlogs(sortedBlogs)
+    })
   }, [])
 
   useEffect(() => {
@@ -47,6 +51,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (error) {
+      console.error('error', error)
       setErrorMessage('wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
@@ -54,35 +59,45 @@ const App = () => {
     }
   }
 
-  const handleAddBlog = async (event) => {
-    event.preventDefault()
-
-    const newBlog = {
-      title,
-      author,
-      url,
-    }
-
+  const handleAddBlog = async (blogObject) => {
     try {
-      await blogService.create(newBlog)
-      setBlogs(blogs.concat(newBlog))
-      setErrorMessage(`new blog - ${newBlog.title}`)
+      await blogService.create(blogObject)
+      const updatedBlogs = await blogService.getAll()
+      const sortedBlogs = await updatedBlogs.sort(
+        (blog1, blog2) => blog2.likes - blog1.likes
+      )
+      setBlogs(sortedBlogs)
+      setErrorMessage(`new blog - ${blogObject.title}`)
       setTimeout(() => {
-        setErrorMessage('')
+        setErrorMessage(null)
       }, 5000)
-      setTitle('')
-      setUrl('')
-      setAuthor('')
     } catch (error) {
+      console.error('error', error)
       setErrorMessage('something went wrong, try again')
       setTimeout(() => {
-        setErrorMessage('')
+        setErrorMessage(null)
       }, 5000)
     }
   }
 
-  const handleChange = (event, handler) => {
-    handler(event.target.value)
+  const handleDeleteBlog = async (id) => {
+    const confirmation = window.confirm(
+      'Are you sure you want to delete this blog post?'
+    )
+
+    if (confirmation) {
+      try {
+        await blogService.deleteBlog(id)
+        setBlogs(blogs.filter((blog) => blog.id !== id))
+        setErrorMessage('blog deleted')
+      } catch (error) {
+        console.error('error', error)
+        setErrorMessage('something went wrong, try again')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      }
+    }
   }
 
   const loginForm = () => {
@@ -122,7 +137,12 @@ const App = () => {
     return (
       <>
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+          <Blog
+            loggedInUser={user}
+            key={blog.id}
+            blog={blog}
+            handleDelete={() => handleDeleteBlog(blog.id)}
+          />
         ))}
       </>
     )
@@ -131,41 +151,8 @@ const App = () => {
   const blogForm = () => {
     return (
       <div>
-        <form onSubmit={handleAddBlog}>
-          <div>
-            <label htmlFor="">
-              title
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => handleChange(e, setTitle)}
-                required
-              />
-            </label>
-          </div>
-          <div>
-            <label htmlFor="">
-              url
-              <input
-                type="text"
-                value={url}
-                onChange={(e) => handleChange(e, setUrl)}
-                required
-              />
-            </label>
-          </div>
-          <div>
-            <label htmlFor="">
-              author
-              <input
-                type="text"
-                value={author}
-                onChange={(e) => handleChange(e, setAuthor)}
-              />
-            </label>
-          </div>
-          <button type="submit">create</button>
-        </form>
+        <h2>create new</h2>
+        <BlogForm createBlog={handleAddBlog} />
       </div>
     )
   }
@@ -192,7 +179,12 @@ const App = () => {
               </button>
             </div>
           }
-          {blogForm()}
+          <Togglable
+            showBtnLabel="create new blog"
+            hideBtnLabel="cancel"
+          >
+            {blogForm()}
+          </Togglable>
           {blogList()}
         </div>
       )}
