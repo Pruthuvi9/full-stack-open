@@ -34,9 +34,10 @@ const BlogForm = ({ createBlog }) => {
     <div>
       <form onSubmit={handleAddBlog}>
         <div>
-          <label htmlFor="">
+          <label htmlFor="title-input">
             title
             <input
+              id="title-input"
               type="text"
               value={title}
               onChange={(e) => handleChange(e, setTitle)}
@@ -45,9 +46,10 @@ const BlogForm = ({ createBlog }) => {
           </label>
         </div>
         <div>
-          <label htmlFor="">
+          <label htmlFor="url-input">
             url
             <input
+              id="url-input"
               type="text"
               value={url}
               onChange={(e) => handleChange(e, setUrl)}
@@ -56,9 +58,10 @@ const BlogForm = ({ createBlog }) => {
           </label>
         </div>
         <div>
-          <label htmlFor="">
+          <label htmlFor="author-input">
             author
             <input
+              id="author-input"
               type="text"
               value={author}
               onChange={(e) => handleChange(e, setAuthor)}

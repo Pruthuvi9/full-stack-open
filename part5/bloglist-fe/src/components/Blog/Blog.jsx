@@ -9,11 +9,12 @@ const Blog = ({ blog, loggedInUser, handleDelete }) => {
     blog.user.username === loggedInUser.username
 
   const incrementLikes = async () => {
+    const newLikes = likes + 1
+    setLikes((prev) => prev + 1)
     await blogService.updateBlog({
       ...blog,
-      likes: likes + 1,
+      likes: newLikes,
     })
-    setLikes(likes + 1)
   }
 
   return (
