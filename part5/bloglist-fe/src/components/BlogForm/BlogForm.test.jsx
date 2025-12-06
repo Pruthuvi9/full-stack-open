@@ -18,8 +18,6 @@ test('<BlogForm /> updates parent state and calls onSubmit', async () => {
   await user.type(authorInput, 'testing author input...')
   await user.click(sendButton)
 
-//   console.log(createBlog.mock.calls)
-
   expect(createBlog.mock.calls).toHaveLength(1)
   expect(createBlog.mock.calls[0][0].title).toBe(
     'testing title input...'
