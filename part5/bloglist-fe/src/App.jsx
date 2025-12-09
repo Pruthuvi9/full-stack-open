@@ -12,14 +12,19 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
+  const [notificationType, setNotificationType] =
+    useState(null)
+
+  const getAllBlogs = async () => {
+    const allBlogs = await blogService.getAll()
+    const sortedBlogs = allBlogs.sort(
+      (blog1, blog2) => blog2.likes - blog1.likes
+    )
+    setBlogs(sortedBlogs)
+  }
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      let sortedBlogs = blogs.sort(
-        (blog1, blog2) => blog2.likes - blog1.likes
-      )
-      setBlogs(sortedBlogs)
-    })
+    getAllBlogs()
   }, [])
 
   useEffect(() => {
@@ -52,9 +57,11 @@ const App = () => {
       setPassword('')
     } catch (error) {
       console.error('error', error)
+      setNotificationType('error')
       setErrorMessage('wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
+        setNotificationType(null)
       }, 5000)
     }
   }
@@ -62,20 +69,20 @@ const App = () => {
   const handleAddBlog = async (blogObject) => {
     try {
       await blogService.create(blogObject)
-      const updatedBlogs = await blogService.getAll()
-      const sortedBlogs = await updatedBlogs.sort(
-        (blog1, blog2) => blog2.likes - blog1.likes
-      )
-      setBlogs(sortedBlogs)
+      getAllBlogs()
+      setNotificationType('successful')
       setErrorMessage(`new blog - ${blogObject.title}`)
       setTimeout(() => {
         setErrorMessage(null)
+        setNotificationType(null)
       }, 5000)
     } catch (error) {
       console.error('error', error)
+      setNotificationType('error')
       setErrorMessage('something went wrong, try again')
       setTimeout(() => {
         setErrorMessage(null)
+        setNotificationType(null)
       }, 5000)
     }
   }
@@ -89,12 +96,19 @@ const App = () => {
       try {
         await blogService.deleteBlog(id)
         setBlogs(blogs.filter((blog) => blog.id !== id))
+        setNotificationType('successful')
         setErrorMessage('blog deleted')
+        setTimeout(() => {
+          setErrorMessage(null)
+          setNotificationType(null)
+        }, 5000)
       } catch (error) {
         console.error('error', error)
+        setNotificationType('error')
         setErrorMessage('something went wrong, try again')
         setTimeout(() => {
           setErrorMessage(null)
+          setNotificationType(null)
         }, 5000)
       }
     }
@@ -160,7 +174,10 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={errorMessage} />
+      <Notification
+        message={errorMessage}
+        classNames={notificationType}
+      />
       {!user && loginForm()}
       {user && (
         <div>

@@ -1,11 +1,19 @@
 import './notification.css'
 
-const Notification = ({ message }) => {
+const Notification = ({ message, classNames }) => {
   if (message === null) {
     return null
   }
 
-  return <div>{message}</div>
+  return (
+    <div
+      className={`notification ${
+        classNames ? classNames : ''
+      }`}
+    >
+      {message}
+    </div>
+  )
 }
 
 export default Notification

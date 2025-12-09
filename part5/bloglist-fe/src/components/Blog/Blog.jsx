@@ -6,7 +6,7 @@ import './blog.css'
 const Blog = ({ blog, loggedInUser, handleDelete }) => {
   const [likes, setLikes] = useState(blog.likes)
   const authorisedUser =
-    blog.user.username === loggedInUser.username
+    blog.user?.username === loggedInUser.username
 
   const incrementLikes = async () => {
     const newLikes = likes + 1
@@ -20,13 +20,17 @@ const Blog = ({ blog, loggedInUser, handleDelete }) => {
   return (
     <div className="blog-component">
       <p>
-        {blog.title} - {blog.author}
+        <span className="blog-title">{blog.title}</span> -{' '}
+        <span className="blog-author">{blog.author}</span>
       </p>
       <Togglable showBtnLabel="view" hideBtnLabel="hide">
         <div>
           <p>{blog.url}</p>
           <div>
-            <p>likes {likes}</p>
+            <p>
+              likes{' '}
+              <span className="likes-count">{likes}</span>
+            </p>
             <button onClick={incrementLikes}>like</button>
           </div>
           <p>{blog.user.name}</p>
