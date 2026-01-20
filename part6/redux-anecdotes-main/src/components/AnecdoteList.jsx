@@ -1,10 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { voteTo } from '../reducers/anecdoteReducer'
+import { addVote } from '../reducers/anecdoteReducer'
 import { setFilter } from '../reducers/filterReducer'
-import {
-  setNotification,
-  resetNotification,
-} from '../reducers/notificationReducer'
+import { setNotification } from '../reducers/notificationReducer'
+import { selectVisibleAnecdotes } from '../selectors'
 
 const Anecdote = ({ anecdote, clickHandler }) => {
   return (
@@ -23,7 +21,6 @@ const Filter = () => {
 
   const handleChange = (event) => {
     const searchTerm = event.target.value
-    // console.log(searchTerm)
     dispatch(setFilter(searchTerm))
   }
   const style = {
@@ -38,21 +35,8 @@ const Filter = () => {
 }
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(({ filter, anecdotes }) => {
-    // console.log('anecdotes', anecdotes)
-    const list =
-      filter === ''
-        ? anecdotes
-        : anecdotes.filter((a) =>
-            a.content.includes(filter)
-          )
-    return [...list].sort((a, b) => b.votes - a.votes)
-  })
+  const anecdotes = useSelector(selectVisibleAnecdotes)
   const dispatch = useDispatch()
-
-  // const vote = (id) => {
-  //   dispatch(voteTo(id))
-  // }
 
   return (
     <>
@@ -63,15 +47,13 @@ const AnecdoteList = () => {
             key={anecdote.id}
             anecdote={anecdote}
             clickHandler={() => {
-              dispatch(voteTo(anecdote.id))
+              dispatch(addVote(anecdote.id))
               dispatch(
                 setNotification(
-                  `You voted ${anecdote.content}`
-                )
+                  `You voted ${anecdote.content}`,
+                  5,
+                ),
               )
-              setTimeout(() => {
-                dispatch(resetNotification())
-              }, 5000)
             }}
           />
         ))}

@@ -1,4 +1,5 @@
 import { createSlice, current } from '@reduxjs/toolkit'
+import anecdoteService from '../services/anecdotes'
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -20,37 +21,66 @@ const asObject = (anecdote) => {
   }
 }
 
-const initialState = anecdotesAtStart.map(asObject)
+// const initialState = anecdotesAtStart.map(asObject)
 
 const anecdoteSlice = createSlice({
   name: 'anecdotes',
-  initialState,
+  initialState: [],
   reducers: {
     voteTo(state, action) {
       // console.log(current(state)
       const id = action.payload
       const anecdoteToChange = state.find(
-        (a) => a.id === id
+        (a) => a.id === id,
       )
       const changedAnecdote = {
         ...anecdoteToChange,
         votes: anecdoteToChange.votes + 1,
       }
       return state.map((a) =>
-        a.id === changedAnecdote.id ? changedAnecdote : a
+        a.id === changedAnecdote.id ? changedAnecdote : a,
       )
     },
     createAnecdote(state, action) {
-      const content = action.payload
-      state.push({
-        content,
-        id: getId(),
-        votes: 0,
-      })
+      state.push(action.payload)
+    },
+    setAnecdotes(state, action) {
+      return action.payload
     },
   },
 })
 
-export const { createAnecdote, voteTo } =
+const { setAnecdotes, createAnecdote, voteTo } =
   anecdoteSlice.actions
+
+export const initialiseAnecdotes = () => {
+  return async (dispatch) => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch(setAnecdotes(anecdotes))
+  }
+}
+
+export const appendAnecdote = (content) => {
+  return async (dispatch) => {
+    let newAnecdote =
+      await anecdoteService.createNew(content)
+    dispatch(createAnecdote(newAnecdote))
+  }
+}
+
+export const addVote = (id) => {
+  return async (dispatch) => {
+    let anecdoteToVote = await anecdoteService.getOne(id)
+
+    const changedAnecdote = {
+      ...anecdoteToVote,
+      votes: anecdoteToVote.votes + 1,
+    }
+
+    await anecdoteService.vote(id, changedAnecdote.votes)
+    dispatch(voteTo(id))
+  }
+}
+
+// export const { voteTo } = anecdoteSlice.actions
 export default anecdoteSlice.reducer
