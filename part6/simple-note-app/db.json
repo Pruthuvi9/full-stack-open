@@ -1,24 +1,24 @@
 {
   "notes": [
     {
-      "content": "the app state is in redux store",
+      "content": "React Query simplifies the communication with backend",
       "important": true,
       "id": "1"
     },
     {
-      "content": "state changes are made with actions",
+      "content": "useReducer is an alternative way for data management",
       "important": false,
       "id": "2"
     },
     {
-      "id": "4f28",
-      "content": "state is now capable",
+      "id": "bcb2",
+      "content": "New note",
       "important": false
     },
     {
-      "id": "37e9",
-      "content": "state is now capable",
-      "important": false
+      "id": "273f",
+      "content": "state is working",
+      "important": true
     }
   ]
 }
