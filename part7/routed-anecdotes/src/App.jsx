@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react'
 import {
   Link,
@@ -93,7 +94,7 @@ const About = () => (
       delineating a specific quirk or trait, to communicate
       an abstract idea about a person, place, or thing
       through the concrete details of a short narrative. An
-      anecdote is "a story with a point."
+      anecdote is &quot;a story with a point.&quot;
     </em>
 
     <p>
